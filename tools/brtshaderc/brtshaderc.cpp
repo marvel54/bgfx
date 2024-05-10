@@ -108,16 +108,6 @@ namespace shaderc
         default:
         case bgfx::RendererType::Noop:         //!< No rendering.
             break;
-        case bgfx::RendererType::Direct3D9:    //!< Direct3D 9.0
-        {
-            if(shaderType == 'v')
-                return "vs_3_0";
-            else if(shaderType == 'f')
-                return "ps_3_0";
-            else if(shaderType == 'c')
-                return "ps_3_0";
-        }
-        break;
         case bgfx::RendererType::Direct3D11:   //!< Direct3D 11.0
         {
             if(shaderType == 'v')
