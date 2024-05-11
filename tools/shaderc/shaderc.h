@@ -50,8 +50,8 @@ namespace bgfx
 		| kUniformCompareBit
 		;
 
-	const char* getUniformTypeName(UniformType::Enum _enum);
-	UniformType::Enum nameToUniformTypeEnum(const char* _name);
+	const char* shaderc_getUniformTypeName(UniformType::Enum _enum);
+	UniformType::Enum shaderc_nameToUniformTypeEnum(const char* _name);
 
 	struct Uniform
 	{

@@ -371,7 +371,7 @@ namespace bgfx { namespace spirv
 
 			BX_TRACE("%s, %s, %d, %d, %d"
 				, un.name.c_str()
-				, getUniformTypeName(UniformType::Enum(un.type & ~kUniformMask))
+				, shaderc_getUniformTypeName(UniformType::Enum(un.type & ~kUniformMask))
 				, un.num
 				, un.regIndex
 				, un.regCount

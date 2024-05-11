@@ -2,11 +2,6 @@
 #include <bx/file.h>
 #include <vector>
 
-// hack to fix the multiple definition link errors
-#define getUniformTypeName getUniformTypeName_shaderc
-#define nameToUniformTypeEnum nameToUniformTypeEnum_shaderc
-#define s_uniformTypeName s_uniformTypeName_shaderc
-
 namespace bgfx
 {
     typedef void(*UserErrorFn)(void*, const char*, va_list);
