@@ -1,10 +1,12 @@
 /*
- * Copyright 2011-2024 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2025 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #ifndef BGFX_H_HEADER_GUARD
 #define BGFX_H_HEADER_GUARD
+
+#define BGFX_IDL_CPP 0
 
 #include <stdarg.h> // va_list
 #include <stdint.h> // uint32_t
@@ -348,7 +350,7 @@ namespace bgfx
 		enum Enum
 		{
 			TriListFlipWinding,  //!< Flip winding order of triangle list.
-			TriStripFlipWinding, //!< Flip winding order of trinagle strip.
+			TriStripFlipWinding, //!< Flip winding order of triangle strip.
 			TriListToLineList,   //!< Convert triangle list to line list.
 			TriStripToTriList,   //!< Convert triangle strip to triangle list.
 			LineStripToLineList, //!< Convert line strip to line list.
@@ -1010,7 +1012,7 @@ namespace bgfx
 		uint32_t numCompute;                //!< Number of compute calls submitted.
 		uint32_t numBlit;                   //!< Number of blit calls submitted.
 		uint32_t maxGpuLatency;             //!< GPU driver latency.
-		uint32_t gpuFrameNum;               //<! Frame which generated gpuTimeBegin, gpuTimeEnd.
+		uint32_t gpuFrameNum;               //!< Frame which generated gpuTimeBegin, gpuTimeEnd.
 
 		uint16_t numDynamicIndexBuffers;    //!< Number of used dynamic index buffers.
 		uint16_t numDynamicVertexBuffers;   //!< Number of used dynamic vertex buffers.
@@ -2006,7 +2008,7 @@ namespace bgfx
 	/// Returns supported backend API renderers.
 	///
 	/// @param[in] _max Maximum number of elements in _enum array.
-	/// @param[inout] _enum Array where supported renderers will be written.
+	/// @param[in,out] _enum Array where supported renderers will be written.
 	///
 	/// @returns Number of supported renderers.
 	///
@@ -2192,7 +2194,8 @@ namespace bgfx
 
 	/// Print into internal debug text character-buffer (VGA-compatible text mode).
 	///
-	/// @param[in] _x, _y 2D position from top-left.
+	/// @param[in] _x The X coordinate (2D position from top-left)
+	/// @param[in] _y The Y coordinate (2D position from top-left)
 	/// @param[in] _attr Color palette. Where top 4-bits represent index of background, and bottom
 	///   4-bits represent foreground color from standard VGA text palette (ANSI escape codes).
 	/// @param[in] _format `printf` style format.
@@ -2209,7 +2212,8 @@ namespace bgfx
 
 	/// Print into internal debug text character-buffer (VGA-compatible text mode).
 	///
-	/// @param[in] _x, _y 2D position from top-left.
+	/// @param[in] _x The X coordinate (2D position from top-left)
+	/// @param[in] _y The Y coordinate (2D position from top-left)
 	/// @param[in] _attr Color palette. Where top 4-bits represent index of background, and bottom
 	///   4-bits represent foreground color from standard VGA text palette (ANSI escape codes).
 	/// @param[in] _format `printf` style format.
@@ -2227,8 +2231,10 @@ namespace bgfx
 
 	/// Draw image into internal debug text buffer.
 	///
-	/// @param[in] _x, _y 2D position from top-left.
-	/// @param[in] _width, _height  Image width and height.
+	/// @param[in] _x The X coordinate (2D position from top-left)
+	/// @param[in] _y The Y coordinate (2D position from top-left)
+	/// @param[in] _width  Image width
+	/// @param[in] _height  Image height
 	/// @param[in] _data  Raw image data (character/attribute raw encoding).
 	/// @param[in] _pitch Image pitch in bytes.
 	///
@@ -3070,7 +3076,8 @@ namespace bgfx
 	/// @param[in] _width Texture width.
 	/// @param[in] _height Texture height.
 	/// @param[in] _format Texture format. See: `TextureFormat::Enum`.
-	/// @param[in] _textureFlags Default texture sampling mode is linear, and wrap mode
+	/// @param[in] _textureFlags Texture creation (see `BGFX_TEXTURE_*`.), and sampler (see `BGFX_SAMPLER_*`)
+	///   flags. Default texture sampling mode is linear, and wrap mode
 	///   is repeat.
 	///   - `BGFX_SAMPLER_[U/V/W]_[MIRROR/CLAMP]` - Mirror or clamp to edge wrap
 	///     mode.
@@ -3094,7 +3101,8 @@ namespace bgfx
 	/// @param[in] _ratio Frame buffer size in respect to back-buffer size. See:
 	///   `BackbufferRatio::Enum`.
 	/// @param[in] _format Texture format. See: `TextureFormat::Enum`.
-	/// @param[in] _textureFlags Default texture sampling mode is linear, and wrap mode
+	/// @param[in] _textureFlags Texture creation (see `BGFX_TEXTURE_*`.), and sampler (see `BGFX_SAMPLER_*`)
+	///   flags. Default texture sampling mode is linear, and wrap mode
 	///   is repeat.
 	///   - `BGFX_SAMPLER_[U/V/W]_[MIRROR/CLAMP]` - Mirror or clamp to edge wrap
 	///     mode.
@@ -3312,7 +3320,10 @@ namespace bgfx
 	/// Set palette color value.
 	///
 	/// @param[in] _index Index into palette.
-	/// @param[in] _r, _g, _b, _a RGBA floating point values.
+	/// @param[in] _r Red value (RGBA floating point values)
+	/// @param[in] _g Green value (RGBA floating point values)
+	/// @param[in] _b Blue value (RGBA floating point values)
+	/// @param[in] _a Alpha value (RGBA floating point values)
 	///
 	/// @attention C99's equivalent binding is `bgfx_set_palette_color`.
 	///

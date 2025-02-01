@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2024 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2025 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -51,7 +51,7 @@ namespace bgfx
 
 		"Unknown?!"
 	};
-	BX_STATIC_ASSERT(BX_COUNTOF(s_shadingLangName) == ShadingLang::Count+1, "ShadingLang::Enum and s_shadingLangName mismatch");
+	static_assert(BX_COUNTOF(s_shadingLangName) == ShadingLang::Count+1, "ShadingLang::Enum and s_shadingLangName mismatch");
 
 	const char* getName(ShadingLang::Enum _lang)
 	{
@@ -293,10 +293,13 @@ namespace bgfx
 		NULL
 	};
 
-	static const char* s_unsignedVecs[] =
+	static const char* s_integerVecs[] =
 	{
+		"ivec2",
 		"uvec2",
+		"ivec3",
 		"uvec3",
+		"ivec4",
 		"uvec4",
 		NULL
 	};
@@ -309,7 +312,7 @@ namespace bgfx
 		"mat3", "float3x3",
 		"mat4", "float4x4",
 	};
-	BX_STATIC_ASSERT(BX_COUNTOF(s_uniformTypeName) == UniformType::Count*2);
+	static_assert(BX_COUNTOF(s_uniformTypeName) == UniformType::Count*2);
 
 	static const char* s_allowedVertexShaderInputs[] =
 	{
@@ -494,7 +497,7 @@ namespace bgfx
 		int32_t len = bx::vsnprintf(out, max, _format, argList);
 		if (len > max)
 		{
-			out = (char*)alloca(len);
+			out = (char*)BX_STACK_ALLOC(len);
 			len = bx::vsnprintf(out, len, _format, argList);
 		}
 
@@ -589,7 +592,7 @@ namespace bgfx
 			int32_t len = bx::vsnprintf(out, max, _format, argList);
 			if (len > max)
 			{
-				out = (char*)alloca(len);
+				out = (char*)BX_STACK_ALLOC(len);
 				len = bx::vsnprintf(out, len, _format, argList);
 			}
 
@@ -680,7 +683,7 @@ namespace bgfx
 	{
 		const int32_t len = bx::strLen(_find);
 
-		char* replace = (char*)alloca(len+1);
+		char* replace = (char*)BX_STACK_ALLOC(len+1);
 		bx::strCopy(replace, len+1, _replace);
 		for (int32_t ii = bx::strLen(replace); ii < len; ++ii)
 		{
@@ -1024,7 +1027,7 @@ namespace bgfx
 
 		bx::printf(
 			  "shaderc, bgfx shader compiler tool, version %d.%d.%d.\n"
-			  "Copyright 2011-2024 Branimir Karadzic. All rights reserved.\n"
+			  "Copyright 2011-2025 Branimir Karadzic. All rights reserved.\n"
 			  "License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE\n\n"
 			, BGFX_SHADERC_VERSION_MAJOR
 			, BGFX_SHADERC_VERSION_MINOR
@@ -1160,6 +1163,7 @@ namespace bgfx
 		preprocessor.setDefaultDefine("BX_PLATFORM_ANDROID");
 		preprocessor.setDefaultDefine("BX_PLATFORM_EMSCRIPTEN");
 		preprocessor.setDefaultDefine("BX_PLATFORM_IOS");
+		preprocessor.setDefaultDefine("BX_PLATFORM_VISIONOS");
 		preprocessor.setDefaultDefine("BX_PLATFORM_LINUX");
 		preprocessor.setDefaultDefine("BX_PLATFORM_OSX");
 		preprocessor.setDefaultDefine("BX_PLATFORM_PS4");
@@ -1225,11 +1229,18 @@ namespace bgfx
 				preprocessor.setDefine(glslDefine);
 			}
 		}
-		else if (0 == bx::strCmpI(platform, "ios") || (0 == bx::strCmpI(platform, "osx")) )
+		else if (
+			0 == bx::strCmpI(platform, "ios") ||
+			0 == bx::strCmpI(platform, "osx") ||
+			0 == bx::strCmpI(platform, "visionos")
+		)
 		{
 			if (0 == bx::strCmpI(platform, "osx"))
 			{
 				preprocessor.setDefine("BX_PLATFORM_OSX=1");
+			}
+			else if (0 == bx::strCmpI(platform, "visionos")) {
+				preprocessor.setDefine("BX_PLATFORM_VISIONOS=1");
 			}
 			else
 			{
@@ -2259,7 +2270,7 @@ namespace bgfx
 								const bool usesTextureArray       = !bx::findIdentifierMatch(input, s_textureArray).isEmpty();
 								const bool usesPacking            = !bx::findIdentifierMatch(input, s_ARB_shading_language_packing).isEmpty();
 								const bool usesViewportLayerArray = !bx::findIdentifierMatch(input, s_ARB_shader_viewport_layer_array).isEmpty();
-								const bool usesUnsignedVecs       = !bx::findIdentifierMatch(preprocessedInput, s_unsignedVecs).isEmpty();
+								const bool usesIntegerVecs        = !bx::findIdentifierMatch(preprocessedInput, s_integerVecs).isEmpty();
 
 								if (profile->lang != ShadingLang::ESSL)
 								{
@@ -2267,7 +2278,7 @@ namespace bgfx
 										|| !bx::findIdentifierMatch(input, s_130).isEmpty()
 										|| usesInterpolationQualifiers
 										|| usesTexelFetch
-										|| usesUnsignedVecs
+										|| usesIntegerVecs
 										) );
 
 									bx::stringPrintf(code, "#version %d\n", need130 ? 130 : glsl_profile);
@@ -2349,15 +2360,6 @@ namespace bgfx
 											);
 									}
 
-									if (130 > glsl_profile)
-									{
-										bx::stringPrintf(code,
-											"#define ivec2 vec2\n"
-											"#define ivec3 vec3\n"
-											"#define ivec4 vec4\n"
-											);
-									}
-
 									if (ARB_shader_texture_lod)
 									{
 										bx::stringPrintf(code,
@@ -2395,7 +2397,7 @@ namespace bgfx
 								else
 								{
 									if (glsl_profile < 300
-									&&  usesUnsignedVecs)
+									&&  usesIntegerVecs)
 									{
 										glsl_profile = 300;
 									}
@@ -2745,7 +2747,7 @@ namespace bgfx
 				bin2c = baseName(outFilePath);
 				if (!bin2c.isEmpty() )
 				{
-					char* temp = (char*)alloca(bin2c.getLength()+1);
+					char* temp = (char*)BX_STACK_ALLOC(bin2c.getLength()+1);
 					for (uint32_t ii = 0, num = bin2c.getLength(); ii < num; ++ii)
 					{
 						char ch = bin2c.getPtr()[ii];

@@ -1036,69 +1036,69 @@ public static partial class bgfx
 		DrawIndirect           = 0x0000000000000010,
 	
 		/// <summary>
+		/// Draw indirect with indirect count is supported.
+		/// </summary>
+		DrawIndirectCount      = 0x0000000000000020,
+	
+		/// <summary>
 		/// Fragment depth is available in fragment shader.
 		/// </summary>
-		FragmentDepth          = 0x0000000000000020,
+		FragmentDepth          = 0x0000000000000040,
 	
 		/// <summary>
 		/// Fragment ordering is available in fragment shader.
 		/// </summary>
-		FragmentOrdering       = 0x0000000000000040,
+		FragmentOrdering       = 0x0000000000000080,
 	
 		/// <summary>
 		/// Graphics debugger is present.
 		/// </summary>
-		GraphicsDebugger       = 0x0000000000000080,
+		GraphicsDebugger       = 0x0000000000000100,
 	
 		/// <summary>
 		/// HDR10 rendering is supported.
 		/// </summary>
-		Hdr10                  = 0x0000000000000100,
+		Hdr10                  = 0x0000000000000200,
 	
 		/// <summary>
 		/// HiDPI rendering is supported.
 		/// </summary>
-		Hidpi                  = 0x0000000000000200,
+		Hidpi                  = 0x0000000000000400,
 	
 		/// <summary>
 		/// Image Read/Write is supported.
 		/// </summary>
-		ImageRw                = 0x0000000000000400,
+		ImageRw                = 0x0000000000000800,
 	
 		/// <summary>
 		/// 32-bit indices are supported.
 		/// </summary>
-		Index32                = 0x0000000000000800,
+		Index32                = 0x0000000000001000,
 	
 		/// <summary>
 		/// Instancing is supported.
 		/// </summary>
-		Instancing             = 0x0000000000001000,
+		Instancing             = 0x0000000000002000,
 	
 		/// <summary>
 		/// Occlusion query is supported.
 		/// </summary>
-		OcclusionQuery         = 0x0000000000002000,
+		OcclusionQuery         = 0x0000000000004000,
+	
+		/// <summary>
+		/// PrimitiveID is available in fragment shader.
+		/// </summary>
+		PrimitiveId            = 0x0000000000008000,
 	
 		/// <summary>
 		/// Renderer is on separate thread.
 		/// </summary>
-		RendererMultithreaded  = 0x0000000000004000,
+		RendererMultithreaded  = 0x0000000000010000,
 	
 		/// <summary>
 		/// Multiple windows are supported.
 		/// </summary>
-		SwapChain              = 0x0000000000008000,
-	
-		/// <summary>
-		/// 2D texture array is supported.
-		/// </summary>
-		Texture2dArray         = 0x0000000000010000,
-	
-		/// <summary>
-		/// 3D textures are supported.
-		/// </summary>
-		Texture3d              = 0x0000000000020000,
+		SwapChain              = 0x0000000000020000,
 	
 		/// <summary>
 		/// Texture blit is supported.
@@ -1106,65 +1106,65 @@ public static partial class bgfx
 		TextureBlit            = 0x0000000000040000,
 	
 		/// <summary>
-		/// Transparent back buffer supported.
-		/// </summary>
-		TransparentBackbuffer  = 0x0000000000080000,
-		TextureCompareReserved = 0x0000000000100000,
-	
-		/// <summary>
 		/// Texture compare less equal mode is supported.
 		/// </summary>
-		TextureCompareLequal   = 0x0000000000200000,
+		TextureCompareLequal   = 0x0000000000080000,
+		TextureCompareReserved = 0x0000000000100000,
 	
 		/// <summary>
 		/// Cubemap texture array is supported.
 		/// </summary>
-		TextureCubeArray       = 0x0000000000400000,
+		TextureCubeArray       = 0x0000000000200000,
 	
 		/// <summary>
 		/// CPU direct access to GPU texture memory.
 		/// </summary>
-		TextureDirectAccess    = 0x0000000000800000,
+		TextureDirectAccess    = 0x0000000000400000,
 	
 		/// <summary>
 		/// Read-back texture is supported.
 		/// </summary>
-		TextureReadBack        = 0x0000000001000000,
+		TextureReadBack        = 0x0000000000800000,
+	
+		/// <summary>
+		/// 2D texture array is supported.
+		/// </summary>
+		Texture2dArray         = 0x0000000001000000,
+	
+		/// <summary>
+		/// 3D textures are supported.
+		/// </summary>
+		Texture3d              = 0x0000000002000000,
+	
+		/// <summary>
+		/// Transparent back buffer supported.
+		/// </summary>
+		TransparentBackbuffer  = 0x0000000004000000,
 	
 		/// <summary>
 		/// Vertex attribute half-float is supported.
 		/// </summary>
-		VertexAttribHalf       = 0x0000000002000000,
+		VertexAttribHalf       = 0x0000000008000000,
 	
 		/// <summary>
 		/// Vertex attribute 10_10_10_2 is supported.
 		/// </summary>
-		VertexAttribUint10     = 0x0000000004000000,
+		VertexAttribUint10     = 0x0000000010000000,
 	
 		/// <summary>
 		/// Rendering with VertexID only is supported.
 		/// </summary>
-		VertexId               = 0x0000000008000000,
-	
-		/// <summary>
-		/// PrimitiveID is available in fragment shader.
-		/// </summary>
-		PrimitiveId            = 0x0000000010000000,
+		VertexId               = 0x0000000020000000,
 	
 		/// <summary>
 		/// Viewport layer is available in vertex shader.
 		/// </summary>
-		ViewportLayerArray     = 0x0000000020000000,
-	
-		/// <summary>
-		/// Draw indirect with indirect count is supported.
-		/// </summary>
-		DrawIndirectCount      = 0x0000000040000000,
+		ViewportLayerArray     = 0x0000000040000000,
 	
 		/// <summary>
 		/// All texture compare modes are supported.
 		/// </summary>
-		TextureCompareAll      = 0x0000000000300000,
+		TextureCompareAll      = 0x0000000000180000,
 	}
 	
 	[Flags]
@@ -2386,16 +2386,6 @@ public static partial class bgfx
 	public static extern unsafe void vertex_layout_decode(VertexLayout* _this, Attrib _attrib, byte * _num, AttribType* _type, bool* _normalized, bool* _asInt);
 	
 	/// <summary>
-	/// Returns `true` if VertexLayout contains attribute.
-	/// </summary>
-	///
-	/// <param name="_attrib">Attribute semantics. See: `bgfx::Attrib`</param>
-	///
-	[DllImport(DllName, EntryPoint="bgfx_vertex_layout_has", CallingConvention = CallingConvention.Cdecl)]
-	[return: MarshalAs(UnmanagedType.I1)]
-	public static extern unsafe bool vertex_layout_has(VertexLayout* _this, Attrib _attrib);
-	
-	/// <summary>
 	/// Skip `_num` bytes in vertex stream.
 	/// </summary>
 	///
@@ -3428,6 +3418,19 @@ public static partial class bgfx
 	///
 	[DllImport(DllName, EntryPoint="bgfx_set_palette_color", CallingConvention = CallingConvention.Cdecl)]
 	public static extern unsafe void set_palette_color(byte _index, float _rgba);
+	
+	/// <summary>
+	/// Set palette color value.
+	/// </summary>
+	///
+	/// <param name="_index">Index into palette.</param>
+	/// <param name="_r">Red value (RGBA floating point values)</param>
+	/// <param name="_g">Green value (RGBA floating point values)</param>
+	/// <param name="_b">Blue value (RGBA floating point values)</param>
+	/// <param name="_a">Alpha value (RGBA floating point values)</param>
+	///
+	[DllImport(DllName, EntryPoint="bgfx_set_palette_color_rgba32f", CallingConvention = CallingConvention.Cdecl)]
+	public static extern unsafe void set_palette_color_rgba32f(byte _index, float _r, float _g, float _b, float _a);
 	
 	/// <summary>
 	/// Set palette color value.
