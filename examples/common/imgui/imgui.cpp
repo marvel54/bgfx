@@ -8,8 +8,13 @@
 #include <bx/allocator.h>
 #include <bx/math.h>
 #include <bx/timer.h>
+#if __has_include(<imgui.h>)
+#include <imgui.h>
+#include <imgui_internal.h>
+#else
 #include <dear-imgui/imgui.h>
 #include <dear-imgui/imgui_internal.h>
+#endif
 
 #include "imgui.h"
 #include "../bgfx_utils.h"

@@ -304,7 +304,7 @@ namespace bgfx
 		NULL
 	};
 
-	const char* s_uniformTypeName[] =
+	const char* s_shaderc_uniformTypeName[] =
 	{
 		"int",  "int",
 		NULL,   NULL,
@@ -312,6 +312,7 @@ namespace bgfx
 		"mat3", "float3x3",
 		"mat4", "float4x4",
 	};
+  
 	static_assert(BX_COUNTOF(s_uniformTypeName) == UniformType::Count*2);
 
 	static const char* s_allowedVertexShaderInputs[] =
@@ -342,6 +343,7 @@ namespace bgfx
 		NULL
 	};
 
+#ifndef BRTSHADERC_LIBRARY
 	void fatal(const char* _filePath, uint16_t _line, Fatal::Enum _code, const char* _format, ...)
 	{
 		BX_UNUSED(_filePath, _line, _code);
@@ -367,6 +369,8 @@ namespace bgfx
 
 		va_end(argList);
 	}
+#endif // BRTSHADERC_LIBRARY
+
 	Options::Options()
 		: shaderType(' ')
 		, disasm(false)
@@ -460,23 +464,23 @@ namespace bgfx
 		return _glsl; // centroid, noperspective
 	}
 
-	const char* getUniformTypeName(UniformType::Enum _enum)
+	const char* shaderc_getUniformTypeName(UniformType::Enum _enum)
 	{
 		uint32_t idx = _enum & ~(kUniformFragmentBit|kUniformSamplerBit);
 		if (idx < UniformType::Count)
 		{
-			return s_uniformTypeName[idx];
+			return s_shaderc_uniformTypeName[idx];
 		}
 
 		return "Unknown uniform type?!";
 	}
 
-	UniformType::Enum nameToUniformTypeEnum(const char* _name)
+	UniformType::Enum shaderc_nameToUniformTypeEnum(const char* _name)
 	{
 		for (uint32_t ii = 0; ii < UniformType::Count*2; ++ii)
 		{
-			if (NULL != s_uniformTypeName[ii]
-			&&  0 == bx::strCmp(_name, s_uniformTypeName[ii]) )
+			if (NULL != s_shaderc_uniformTypeName[ii]
+			&&  0 == bx::strCmp(_name, s_shaderc_uniformTypeName[ii]) )
 			{
 				return UniformType::Enum(ii/2);
 			}

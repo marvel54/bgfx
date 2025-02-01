@@ -198,7 +198,7 @@ namespace bgfx { namespace glsl
 					}
 
 					Uniform un;
-					un.type = nameToUniformTypeEnum(uniformType);
+					un.type = shaderc_nameToUniformTypeEnum(uniformType);
 
 					if (UniformType::Count != un.type)
 					{
@@ -275,7 +275,7 @@ namespace bgfx { namespace glsl
 					}
 
 					Uniform un;
-					un.type = nameToUniformTypeEnum(uniformType);
+					un.type = shaderc_nameToUniformTypeEnum(uniformType);
 
 					if (UniformType::Count != un.type)
 					{
@@ -311,7 +311,7 @@ namespace bgfx { namespace glsl
 				if (!textureName.isEmpty())
 				{
 					Uniform un;
-					un.type = nameToUniformTypeEnum("int");	// int for sampler
+					un.type = shaderc_nameToUniformTypeEnum("int");	// int for sampler
 					const char* varNameEnd = textureName.getPtr() - 1;
 					parse.set(parse.getPtr(), varNameEnd - 1);
 					const char* varNameBeg = parse.getPtr();
@@ -369,7 +369,7 @@ namespace bgfx { namespace glsl
 
 			BX_TRACE("%s, %s, %d, %d, %d"
 				, un.name.c_str()
-				, getUniformTypeName(un.type)
+				, shaderc_getUniformTypeName(un.type)
 				, un.num
 				, un.regIndex
 				, un.regCount

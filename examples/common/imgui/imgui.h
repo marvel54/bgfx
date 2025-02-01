@@ -7,9 +7,18 @@
 #define IMGUI_H_HEADER_GUARD
 
 #include <bgfx/bgfx.h>
+#if __has_include(<imgui.h>)
+#include <imgui.h>
+#else
 #include <dear-imgui/imgui.h>
+#endif
+
+#if __has_include(<iconfontheaders/icons_kenney.h>)
 #include <iconfontheaders/icons_kenney.h>
+#endif
+#if __has_include(<iconfontheaders/icons_font_awesome.h>)
 #include <iconfontheaders/icons_font_awesome.h>
+#endif
 
 #define IMGUI_MBUT_LEFT   0x01
 #define IMGUI_MBUT_RIGHT  0x02
