@@ -1,7 +1,7 @@
 -- vim: syntax=lua
 -- bgfx interface
 
-version(127)
+version(129)
 
 typedef "bool"
 typedef "char"
@@ -370,6 +370,7 @@ flag.Caps { bits = 64, base = 1, name = "Caps" }
 	.Compute                --- Compute shaders are supported.
 	.ConservativeRaster     --- Conservative rasterization is supported.
 	.DrawIndirect           --- Draw indirect is supported.
+	.DrawIndirectCount      --- Draw indirect with indirect count is supported.
 	.FragmentDepth          --- Fragment depth is available in fragment shader.
 	.FragmentOrdering       --- Fragment ordering is available in fragment shader.
 	.GraphicsDebugger       --- Graphics debugger is present.
@@ -379,23 +380,23 @@ flag.Caps { bits = 64, base = 1, name = "Caps" }
 	.Index32                --- 32-bit indices are supported.
 	.Instancing             --- Instancing is supported.
 	.OcclusionQuery         --- Occlusion query is supported.
+	.PrimitiveId            --- PrimitiveID is available in fragment shader.
 	.RendererMultithreaded  --- Renderer is on separate thread.
 	.SwapChain              --- Multiple windows are supported.
-	.Texture_2dArray        --- 2D texture array is supported.
-	.Texture_3d             --- 3D textures are supported.
 	.TextureBlit            --- Texture blit is supported.
-	.TransparentBackbuffer  --- Transparent back buffer supported.
-	.TextureCompareReserved
 	.TextureCompareLequal   --- Texture compare less equal mode is supported.
+	.TextureCompareReserved
 	.TextureCubeArray       --- Cubemap texture array is supported.
 	.TextureDirectAccess    --- CPU direct access to GPU texture memory.
 	.TextureReadBack        --- Read-back texture is supported.
+	.Texture_2dArray        --- 2D texture array is supported.
+	.Texture_3d             --- 3D textures are supported.
+	.TransparentBackbuffer  --- Transparent back buffer supported.
 	.VertexAttribHalf       --- Vertex attribute half-float is supported.
 	.VertexAttribUint10     --- Vertex attribute 10_10_10_2 is supported.
 	.VertexId               --- Rendering with VertexID only is supported.
-	.PrimitiveId            --- PrimitiveID is available in fragment shader.
 	.ViewportLayerArray     --- Viewport layer is available in vertex shader.
-	.DrawIndirectCount      --- Draw indirect with indirect count is supported.
+
 	.TextureCompareAll      --- All texture compare modes are supported.
 	 { "TextureCompareReserved", "TextureCompareLequal" }
 	()
@@ -800,7 +801,7 @@ struct.Resolution { ctor }
 	.debugTextScale  "uint8_t"             --- Scale factor for debug text.
 
 --- Configurable runtime limits parameters.
-struct.Limits { namespace = "Init" }
+struct.Limits { ctor, namespace = "Init" }
 	.maxEncoders       "uint16_t" --- Maximum number of encoder threads.
 	.minResourceCbSize "uint32_t" --- Minimum resource command buffer size.
 	.transientVbSize   "uint32_t" --- Maximum transient vertex buffer size.
@@ -1045,7 +1046,7 @@ func.VertexLayout.decode { const }
 	.asInt      "bool &"             { out } --- Attribute is packed as int.
 
 --- Returns `true` if VertexLayout contains attribute.
-func.VertexLayout.has { const, conly, cppinline }
+func.VertexLayout.has { const, cppinline }
 	"bool"                 --- True if VertexLayout contains attribute.
 	.attrib "Attrib::Enum" --- Attribute semantics. See: `bgfx::Attrib`
 
@@ -1655,7 +1656,7 @@ func.createTexture
 	"TextureHandle"                            --- Texture handle.
 	.mem   "const Memory*"                     --- DDS, KTX or PVR texture binary data.
 	.flags "uint64_t"                          --- Texture creation (see `BGFX_TEXTURE_*`.), and sampler (see `BGFX_SAMPLER_*`)
-	 { "BGFX_TEXTURE_NONE|BGFX_SAMPLER_NONE" } --- flags. Default texture sampling mode is linear, and wrap mode is repeat.
+	 { default = "BGFX_TEXTURE_NONE|BGFX_SAMPLER_NONE" } --- flags. Default texture sampling mode is linear, and wrap mode is repeat.
 	                                           --- - `BGFX_SAMPLER_[U/V/W]_[MIRROR/CLAMP]` - Mirror or clamp to edge wrap
 	                                           ---   mode.
 	                                           --- - `BGFX_SAMPLER_[MIN/MAG/MIP]_[POINT/ANISOTROPIC]` - Point or anisotropic
@@ -1675,7 +1676,7 @@ func.createTexture2D
 	                                           --- `BGFX_CAPS_TEXTURE_2D_ARRAY` flag is not set.
 	.format    "TextureFormat::Enum"           --- Texture format. See: `TextureFormat::Enum`.
 	.flags     "uint64_t"                      --- Texture creation (see `BGFX_TEXTURE_*`.), and sampler (see `BGFX_SAMPLER_*`)
-	 { "BGFX_TEXTURE_NONE|BGFX_SAMPLER_NONE" } --- flags. Default texture sampling mode is linear, and wrap mode is repeat.
+	 { default = "BGFX_TEXTURE_NONE|BGFX_SAMPLER_NONE" } --- flags. Default texture sampling mode is linear, and wrap mode is repeat.
 	                                           --- - `BGFX_SAMPLER_[U/V/W]_[MIRROR/CLAMP]` - Mirror or clamp to edge wrap
 	                                           ---   mode.
 	                                           --- - `BGFX_SAMPLER_[MIN/MAG/MIP]_[POINT/ANISOTROPIC]` - Point or anisotropic
@@ -1996,6 +1997,15 @@ func.setPaletteColor
 	"void"
 	.index "uint8_t"        --- Index into palette.
 	.rgba  "const float[4]" --- RGBA floating point values.
+
+--- Set palette color value.
+func.setPaletteColor { cname = "set_palette_color_rgba32f" }
+	"void"
+	.index "uint8_t" --- Index into palette.
+	.r     "float"   --- Red value (RGBA floating point values)
+	.g     "float"   --- Green value (RGBA floating point values)
+	.b     "float"   --- Blue value (RGBA floating point values)
+	.a     "float"   --- Alpha value (RGBA floating point values)
 
 --- Set palette color value.
 func.setPaletteColor { cname = "set_palette_color_rgba8" }

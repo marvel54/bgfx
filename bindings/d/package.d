@@ -10,7 +10,7 @@ import bindbc.bgfx.config;
 import bindbc.common.types: c_int64, c_uint64, va_list;
 static import bgfx.fakeenum;
 
-enum uint apiVersion = 127;
+enum uint apiVersion = 129;
 
 alias ViewID = ushort;
 
@@ -163,12 +163,12 @@ enum StencilFuncRef: StencilFuncRef_{
 StencilFuncRef_ toStencilFuncRef(uint v) nothrow @nogc pure @safe{ return (v << StencilFuncRef.shift) & StencilFuncRef.mask; }
 
 ///Set stencil rmask value.
-alias StencilFuncRmask_ = uint;
-enum StencilFuncRmask: StencilFuncRmask_{
+alias StencilFuncRMask_ = uint;
+enum StencilFuncRMask: StencilFuncRMask_{
 	shift  = 8,
 	mask   = 0x0000_FF00,
 }
-StencilFuncRmask_ toStencilFuncRmask(uint v) nothrow @nogc pure @safe{ return (v << StencilFuncRmask.shift) & StencilFuncRmask.mask; }
+StencilFuncRMask_ toStencilFuncRMask(uint v) nothrow @nogc pure @safe{ return (v << StencilFuncRMask.shift) & StencilFuncRMask.mask; }
 
 alias Stencil_ = uint;
 enum Stencil: Stencil_{
@@ -497,33 +497,33 @@ enum CapFlags: CapFlags_{
 	compute                 = 0x0000_0000_0000_0004, ///Compute shaders are supported.
 	conservativeRaster      = 0x0000_0000_0000_0008, ///Conservative rasterization is supported.
 	drawIndirect            = 0x0000_0000_0000_0010, ///Draw indirect is supported.
-	fragmentDepth           = 0x0000_0000_0000_0020, ///Fragment depth is available in fragment shader.
-	fragmentOrdering        = 0x0000_0000_0000_0040, ///Fragment ordering is available in fragment shader.
-	graphicsDebugger        = 0x0000_0000_0000_0080, ///Graphics debugger is present.
-	hdr10                   = 0x0000_0000_0000_0100, ///HDR10 rendering is supported.
-	hiDPI                   = 0x0000_0000_0000_0200, ///HiDPI rendering is supported.
-	imageRW                 = 0x0000_0000_0000_0400, ///Image Read/Write is supported.
-	index32                 = 0x0000_0000_0000_0800, ///32-bit indices are supported.
-	instancing              = 0x0000_0000_0000_1000, ///Instancing is supported.
-	occlusionQuery          = 0x0000_0000_0000_2000, ///Occlusion query is supported.
-	rendererMultithreaded   = 0x0000_0000_0000_4000, ///Renderer is on separate thread.
-	swapChain               = 0x0000_0000_0000_8000, ///Multiple windows are supported.
-	texture2DArray          = 0x0000_0000_0001_0000, ///2D texture array is supported.
-	texture3D               = 0x0000_0000_0002_0000, ///3D textures are supported.
+	drawIndirectCount       = 0x0000_0000_0000_0020, ///Draw indirect with indirect count is supported.
+	fragmentDepth           = 0x0000_0000_0000_0040, ///Fragment depth is available in fragment shader.
+	fragmentOrdering        = 0x0000_0000_0000_0080, ///Fragment ordering is available in fragment shader.
+	graphicsDebugger        = 0x0000_0000_0000_0100, ///Graphics debugger is present.
+	hdr10                   = 0x0000_0000_0000_0200, ///HDR10 rendering is supported.
+	hiDPI                   = 0x0000_0000_0000_0400, ///HiDPI rendering is supported.
+	imageRW                 = 0x0000_0000_0000_0800, ///Image Read/Write is supported.
+	index32                 = 0x0000_0000_0000_1000, ///32-bit indices are supported.
+	instancing              = 0x0000_0000_0000_2000, ///Instancing is supported.
+	occlusionQuery          = 0x0000_0000_0000_4000, ///Occlusion query is supported.
+	primitiveID             = 0x0000_0000_0000_8000, ///PrimitiveID is available in fragment shader.
+	rendererMultithreaded   = 0x0000_0000_0001_0000, ///Renderer is on separate thread.
+	swapChain               = 0x0000_0000_0002_0000, ///Multiple windows are supported.
 	textureBlit             = 0x0000_0000_0004_0000, ///Texture blit is supported.
-	transparentBackbuffer   = 0x0000_0000_0008_0000, ///Transparent back buffer supported.
+	textureCompareLEqual    = 0x0000_0000_0008_0000, ///Texture compare less equal mode is supported.
 	textureCompareReserved  = 0x0000_0000_0010_0000,
-	textureCompareLEqual    = 0x0000_0000_0020_0000, ///Texture compare less equal mode is supported.
-	textureCubeArray        = 0x0000_0000_0040_0000, ///Cubemap texture array is supported.
-	textureDirectAccess     = 0x0000_0000_0080_0000, ///CPU direct access to GPU texture memory.
-	textureReadBack         = 0x0000_0000_0100_0000, ///Read-back texture is supported.
-	vertexAttribHalf        = 0x0000_0000_0200_0000, ///Vertex attribute half-float is supported.
-	vertexAttribUint10      = 0x0000_0000_0400_0000, ///Vertex attribute 10_10_10_2 is supported.
-	vertexID                = 0x0000_0000_0800_0000, ///Rendering with VertexID only is supported.
-	primitiveID             = 0x0000_0000_1000_0000, ///PrimitiveID is available in fragment shader.
-	viewportLayerArray      = 0x0000_0000_2000_0000, ///Viewport layer is available in vertex shader.
-	drawIndirectCount       = 0x0000_0000_4000_0000, ///Draw indirect with indirect count is supported.
-	textureCompareAll       = 0x0000_0000_0030_0000, ///All texture compare modes are supported.
+	textureCubeArray        = 0x0000_0000_0020_0000, ///Cubemap texture array is supported.
+	textureDirectAccess     = 0x0000_0000_0040_0000, ///CPU direct access to GPU texture memory.
+	textureReadBack         = 0x0000_0000_0080_0000, ///Read-back texture is supported.
+	texture2DArray          = 0x0000_0000_0100_0000, ///2D texture array is supported.
+	texture3D               = 0x0000_0000_0200_0000, ///3D textures are supported.
+	transparentBackbuffer   = 0x0000_0000_0400_0000, ///Transparent back buffer supported.
+	vertexAttribHalf        = 0x0000_0000_0800_0000, ///Vertex attribute half-float is supported.
+	vertexAttribUint10      = 0x0000_0000_1000_0000, ///Vertex attribute 10_10_10_2 is supported.
+	vertexID                = 0x0000_0000_2000_0000, ///Rendering with VertexID only is supported.
+	viewportLayerArray      = 0x0000_0000_4000_0000, ///Viewport layer is available in vertex shader.
+	textureCompareAll       = 0x0000_0000_0018_0000, ///All texture compare modes are supported.
 }
 
 alias CapsFormat_ = uint;
@@ -904,57 +904,57 @@ pragma(inline,true) nothrow @nogc pure @safe{
 	StateBlend_ blendFuncSeparate(StateBlend_ srcRGB, StateBlend_ dstRGB, StateBlend_ srcA, StateBlend_ dstA){
 		return (srcRGB | ((dstRGB) << 4)) | ((srcA | (dstA << 4)) << 8);
 	}
-	
+
 	///Blend equation separate.
 	StateBlendEquation_ blendEquationSeparate(StateBlendEquation_ equationRGB, StateBlendEquation_ equationA){
 		return equationRGB | (equationA << 3);
 	}
-	
+
 	///Blend function.
 	StateBlend_ blendFunc(StateBlend_ src, StateBlend_ dst){ return blendFuncSeparate(src, dst, src, dst); }
-	
+
 	///Blend equation.
 	StateBlendEquation_ blendEquation(StateBlendEquation_ equation){ return blendEquationSeparate(equation, equation); }
-	
+
 	///Utility predefined blend modes.
 	enum StateBlendFunc: StateBlend_{
 		///Additive blending.
 		add = blendFunc(StateBlend.one, StateBlend.one),
-		
+
 		///Alpha blend.
 		alpha = blendFunc(StateBlend.srcAlpha, StateBlend.invSrcAlpha),
-		
+
 		///Selects darker color of blend.
 		darken = blendFunc(StateBlend.one, StateBlend.one) | blendEquation(StateBlendEquation.min),
-		
+
 		///Selects lighter color of blend.
 		lighten = blendFunc(StateBlend.one, StateBlend.one) | blendEquation(StateBlendEquation.max),
-		
+
 		///Multiplies colors.
 		multiply = blendFunc(StateBlend.dstColor, StateBlend.zero),
-		
+
 		///Opaque pixels will cover the pixels directly below them without any math or algorithm applied to them.
 		normal = blendFunc(StateBlend.one, StateBlend.invSrcAlpha),
-		
+
 		///Multiplies the inverse of the blend and base colors.
 		screen = blendFunc(StateBlend.one, StateBlend.invSrcColor),
-		
+
 		///Decreases the brightness of the base color based on the value of the blend color.
 		linearBurn = blendFunc(StateBlend.dstColor, StateBlend.invDstColor) | blendEquation(StateBlendEquation.sub),
 	}
-	
+
 	StateBlend_ blendFuncRTx(StateBlend_ src, StateBlend_ dst){
 		return cast(uint)(src >> StateBlend.shift) | (cast(uint)(dst >> StateBlend.shift) << 4);
 	}
-	
+
 	StateBlend_ blendFuncRTxE(StateBlend_ src, StateBlend_ dst, StateBlendEquation_ equation){
 		return blendFuncRTx(src, dst) | (cast(uint)(equation >> StateBlendEquation.shift) << 8);
 	}
-	
+
 	StateBlend_ blendFuncRT1(StateBlend_ src, StateBlend_ dst){ return blendFuncRTx(src, dst) <<  0; }
 	StateBlend_ blendFuncRT2(StateBlend_ src, StateBlend_ dst){ return blendFuncRTx(src, dst) << 11; }
 	StateBlend_ blendFuncRT3(StateBlend_ src, StateBlend_ dst){ return blendFuncRTx(src, dst) << 22; }
-	
+
 	StateBlend_ blendFuncRT1E(StateBlend_ src, StateBlend_ dst, StateBlendEquation_ equation){
 		return blendFuncRTxE(src, dst, equation) <<  0;
 	}
@@ -1105,6 +1105,12 @@ extern(C++, "bgfx") struct Init{
 		uint minResourceCBSize; ///Minimum resource command buffer size.
 		uint transientVBSize; ///Maximum transient vertex buffer size.
 		uint transientIBSize; ///Maximum transient index buffer size.
+		extern(D) mixin(joinFnBinds((){
+			FnBind[] ret = [
+				{q{void}, q{this}, q{}, ext: `C++`},
+			];
+			return ret;
+		}()));
 	}
 	
 	/**
@@ -2503,7 +2509,7 @@ mixin(joinFnBinds((){
 			skip = Skip top level mips when parsing texture.
 			info = When non-`NULL` is specified it returns parsed texture information.
 		*/
-		{q{TextureHandle}, q{createTexture}, q{const(Memory)* mem, c_uint64 flags, ubyte skip=0, TextureInfo* info=null}, ext: `C++, "bgfx"`},
+		{q{TextureHandle}, q{createTexture}, q{const(Memory)* mem, c_uint64 flags=Texture.none|Sampler.none, ubyte skip=0, TextureInfo* info=null}, ext: `C++, "bgfx"`},
 		
 		/**
 		* Create 2D texture.
@@ -2524,7 +2530,7 @@ mixin(joinFnBinds((){
 		`_mem` is NULL content of the texture is uninitialized. When `_numLayers` is more than
 		1, expected memory layout is texture and all mips together for each array element.
 		*/
-		{q{TextureHandle}, q{createTexture2D}, q{ushort width, ushort height, bool hasMIPs, ushort numLayers, bgfx.fakeenum.TextureFormat.Enum format, c_uint64 flags, const(Memory)* mem=null}, ext: `C++, "bgfx"`},
+		{q{TextureHandle}, q{createTexture2D}, q{ushort width, ushort height, bool hasMIPs, ushort numLayers, bgfx.fakeenum.TextureFormat.Enum format, c_uint64 flags=Texture.none|Sampler.none, const(Memory)* mem=null}, ext: `C++, "bgfx"`},
 		
 		/**
 		* Create texture with size based on back-buffer ratio. Texture will maintain ratio
@@ -2853,6 +2859,17 @@ mixin(joinFnBinds((){
 			rgba = RGBA floating point values.
 		*/
 		{q{void}, q{setPaletteColor}, q{ubyte index, const(float)* rgba}, ext: `C++, "bgfx"`},
+		
+		/**
+		* Set palette color value.
+		Params:
+			index = Index into palette.
+			r = Red value (RGBA floating point values)
+			g = Green value (RGBA floating point values)
+			b = Blue value (RGBA floating point values)
+			a = Alpha value (RGBA floating point values)
+		*/
+		{q{void}, q{setPaletteColor}, q{ubyte index, float r, float g, float b, float a}, ext: `C++, "bgfx"`},
 		
 		/**
 		* Set palette color value.
@@ -3568,7 +3585,7 @@ mixin(joinFnBinds((){
 		
 	];
 	return ret;
-}(), "Resolution, Init, Attachment, VertexLayout, Encoder, "));
+}(), "Resolution, Limits, Init, Attachment, VertexLayout, Encoder, "));
 
 static if(!staticBinding):
 import bindbc.loader;

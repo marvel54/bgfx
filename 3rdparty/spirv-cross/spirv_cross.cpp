@@ -93,6 +93,97 @@ bool Compiler::variable_storage_is_aliased(const SPIRVariable &v)
 	return !is_restrict && (ssbo || image || counter || buffer_reference);
 }
 
+bool Compiler::block_is_control_dependent(const SPIRBlock &block)
+{
+	for (auto &i : block.ops)
+	{
+		auto ops = stream(i);
+		auto op = static_cast<Op>(i.op);
+
+		switch (op)
+		{
+		case OpFunctionCall:
+		{
+			uint32_t func = ops[2];
+			if (function_is_control_dependent(get<SPIRFunction>(func)))
+				return true;
+			break;
+		}
+
+		// Derivatives
+		case OpDPdx:
+		case OpDPdxCoarse:
+		case OpDPdxFine:
+		case OpDPdy:
+		case OpDPdyCoarse:
+		case OpDPdyFine:
+		case OpFwidth:
+		case OpFwidthCoarse:
+		case OpFwidthFine:
+
+		// Anything implicit LOD
+		case OpImageSampleImplicitLod:
+		case OpImageSampleDrefImplicitLod:
+		case OpImageSampleProjImplicitLod:
+		case OpImageSampleProjDrefImplicitLod:
+		case OpImageSparseSampleImplicitLod:
+		case OpImageSparseSampleDrefImplicitLod:
+		case OpImageSparseSampleProjImplicitLod:
+		case OpImageSparseSampleProjDrefImplicitLod:
+		case OpImageQueryLod:
+		case OpImageDrefGather:
+		case OpImageGather:
+		case OpImageSparseDrefGather:
+		case OpImageSparseGather:
+
+		// Anything subgroups
+		case OpGroupNonUniformElect:
+		case OpGroupNonUniformAll:
+		case OpGroupNonUniformAny:
+		case OpGroupNonUniformAllEqual:
+		case OpGroupNonUniformBroadcast:
+		case OpGroupNonUniformBroadcastFirst:
+		case OpGroupNonUniformBallot:
+		case OpGroupNonUniformInverseBallot:
+		case OpGroupNonUniformBallotBitExtract:
+		case OpGroupNonUniformBallotBitCount:
+		case OpGroupNonUniformBallotFindLSB:
+		case OpGroupNonUniformBallotFindMSB:
+		case OpGroupNonUniformShuffle:
+		case OpGroupNonUniformShuffleXor:
+		case OpGroupNonUniformShuffleUp:
+		case OpGroupNonUniformShuffleDown:
+		case OpGroupNonUniformIAdd:
+		case OpGroupNonUniformFAdd:
+		case OpGroupNonUniformIMul:
+		case OpGroupNonUniformFMul:
+		case OpGroupNonUniformSMin:
+		case OpGroupNonUniformUMin:
+		case OpGroupNonUniformFMin:
+		case OpGroupNonUniformSMax:
+		case OpGroupNonUniformUMax:
+		case OpGroupNonUniformFMax:
+		case OpGroupNonUniformBitwiseAnd:
+		case OpGroupNonUniformBitwiseOr:
+		case OpGroupNonUniformBitwiseXor:
+		case OpGroupNonUniformLogicalAnd:
+		case OpGroupNonUniformLogicalOr:
+		case OpGroupNonUniformLogicalXor:
+		case OpGroupNonUniformQuadBroadcast:
+		case OpGroupNonUniformQuadSwap:
+
+		// Control barriers
+		case OpControlBarrier:
+			return true;
+
+		default:
+			break;
+		}
+	}
+
+	return false;
+}
+
 bool Compiler::block_is_pure(const SPIRBlock &block)
 {
 	// This is a global side effect of the function.
@@ -247,16 +338,19 @@ string Compiler::to_name(uint32_t id, bool allow_alias) const
 bool Compiler::function_is_pure(const SPIRFunction &func)
 {
 	for (auto block : func.blocks)
-	{
 		if (!block_is_pure(get<SPIRBlock>(block)))
-		{
-			//fprintf(stderr, "Function %s is impure!\n", to_name(func.self).c_str());
 			return false;
-		}
-	}
 
-	//fprintf(stderr, "Function %s is pure!\n", to_name(func.self).c_str());
 	return true;
+}
+
+bool Compiler::function_is_control_dependent(const SPIRFunction &func)
+{
+	for (auto block : func.blocks)
+		if (block_is_control_dependent(get<SPIRBlock>(block)))
+			return true;
+
+	return false;
 }
 
 void Compiler::register_global_read_dependencies(const SPIRBlock &block, uint32_t id)
@@ -1756,6 +1850,11 @@ const SmallVector<SPIRBlock::Case> &Compiler::get_case_list(const SPIRBlock &blo
 		const auto &type = get<SPIRType>(constant->constant_type);
 		width = type.width;
 	}
+	else if (const auto *op = maybe_get<SPIRConstantOp>(block.condition))
+	{
+		const auto &type = get<SPIRType>(op->basetype);
+		width = type.width;
+	}
 	else if (const auto *var = maybe_get<SPIRVariable>(block.condition))
 	{
 		const auto &type = get<SPIRType>(var->basetype);
@@ -2470,6 +2569,15 @@ void Compiler::add_active_interface_variable(uint32_t var_id)
 
 void Compiler::inherit_expression_dependencies(uint32_t dst, uint32_t source_expression)
 {
+	auto *ptr_e = maybe_get<SPIRExpression>(dst);
+
+	if (is_position_invariant() && ptr_e && maybe_get<SPIRExpression>(source_expression))
+	{
+		auto &deps = ptr_e->invariance_dependencies;
+		if (std::find(deps.begin(), deps.end(), source_expression) == deps.end())
+			deps.push_back(source_expression);
+	}
+
 	// Don't inherit any expression dependencies if the expression in dst
 	// is not a forwarded temporary.
 	if (forwarded_temporaries.find(dst) == end(forwarded_temporaries) ||
@@ -2478,7 +2586,7 @@ void Compiler::inherit_expression_dependencies(uint32_t dst, uint32_t source_exp
 		return;
 	}
 
-	auto &e = get<SPIRExpression>(dst);
+	auto &e = *ptr_e;
 	auto *phi = maybe_get<SPIRVariable>(source_expression);
 	if (phi && phi->phi_variable)
 	{
